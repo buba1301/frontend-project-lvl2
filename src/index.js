@@ -4,8 +4,6 @@ import process from 'process';
 import _ from 'lodash';
 
 const mapping = {
-  yaml: (data) => yaml.safeLoad(data),
-  yml: (data) => yaml.safeLoad(data),
   json: (data) => JSON.parse(data),
 };
 
@@ -35,6 +33,7 @@ export default (filePath1, filePath2) => {
     if (!_.has(file2, elem)) {
       return [...acc, `- ${elem}: ${file1[elem]}`];
     }
+    return [...acc, `+ ${elem}: ${file2[elem]}`];
   }, addedItems);
   const differenceToString = `{\n${difference.join('\n')}\n}`;
   console.log(differenceToString);
