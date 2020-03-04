@@ -1,41 +1,27 @@
-import path from 'path';
-import fs from 'fs';
-import process from 'process';
+
 import _ from 'lodash';
+import parser from './parsers';
 
-const mapping = {
-  json: (data) => JSON.parse(data),
-};
-
-const parser = (filePath) => {
-  const pathToFile = path.resolve(process.cwd(), filePath);
-  console.log(pathToFile);
-  const type = path.extname(filePath).slice(1);
-  console.log(type);
-  const data = fs.readFileSync(pathToFile).toString();
-  console.log(data);
-  return mapping[type](data);
-};
 
 export default (filePath1, filePath2) => {
   const file1 = parser(filePath1);
   const file2 = parser(filePath2);
+
+  const afterNewFileKeys = Object.keys(file2).filter((elem) => !beforeFileKeys.includes(elem));
+  const addedItems = afterNewFileKeys.map((elem) => `+ ${elem}: ${file2[elem]}`);
+
   const beforeFileKeys = Object.keys(file1);
-  const afterFileKeys = Object.keys(file2).filter((elem) => !beforeFileKeys.includes(elem));
-  const addedItems = afterFileKeys.map((elem) => `+ ${elem}: ${file2[elem]}`);
-  const difference = beforeFileKeys.reduce((acc, elem) => {
-    if (_.has(file2, elem) && file1[elem] === file2[elem]) {
-      return [`${elem}: ${file1[elem]}`, ...acc];
+  const difference = beforeFileKeys.reduce((acc, key) => {
+    if (_.has(file2, key) && file1[key] === file2[key]) {
+      return [`${key}: ${file1[key]}`, ...acc];
     }
-    if (_.has(file2, elem) && file1[elem] !== file2[elem]) {
-      return [...acc, `- ${elem}: ${file1[elem]}`, `+ ${elem}: ${file2[elem]}`];
+    if (_.has(file2, key) && file1[key] !== file2[key]) {
+      return [...acc, `- ${key}: ${file1[key]}`, `+ ${key}: ${file2[key]}`];
     }
-    if (!_.has(file2, elem)) {
-      return [...acc, `- ${elem}: ${file1[elem]}`];
-    }
-    return [...acc, `+ ${elem}: ${file2[elem]}`];
+    return [...acc, `- ${key}: ${file1[key]}`];
   }, addedItems);
-  const differenceToString = `{\n${difference.join('\n')}\n}`;
+
+  const differenceToString = `{\n ${difference.join('\n ')}\n}`;
   console.log(differenceToString);
   return differenceToString;
 };
