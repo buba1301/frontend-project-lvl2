@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import process from 'process';
 import _ from 'lodash';
-import yaml from 'js-yaml';
 
 const mapping = {
   yaml: (data) => yaml.safeLoad(data),
@@ -12,8 +11,11 @@ const mapping = {
 
 const parser = (filePath) => {
   const pathToFile = path.resolve(process.cwd(), filePath);
+  console.log(pathToFile);
   const type = path.extname(filePath).slice(1);
-  const data = fs.readFileSync(pathToFile);
+  console.log(type);
+  const data = fs.readFileSync(pathToFile).toString();
+  console.log(data);
   return mapping[type](data);
 };
 
@@ -35,5 +37,6 @@ export default (filePath1, filePath2) => {
     }
   }, addedItems);
   const differenceToString = `{\n${difference.join('\n')}\n}`;
+  console.log(differenceToString);
   return differenceToString;
 };
