@@ -1,29 +1,45 @@
 import path from 'path';
+import fs from 'fs';
 import getDiff from '../src';
 
-describe('diffFile', () => {
-  const pathToFixtures = path.join(__dirname, '__fixtures__');
 
-  const actual = '{\n host: hexlet.io\n + verbose: true\n - timeout: 50\n + timeout: 20\n - proxy: 123.234.53.22\n - follow: false\n}';
+describe('diffFile', () => {
+  const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
+  const expected1 = fs.readFileSync(getFixturePath('result.txt'), 'utf-8');
+  const expected2 = fs.readFileSync(getFixturePath('result1.txt'), 'utf-8');
 
   it('test json', () => {
-    const filePathBefore = path.join(pathToFixtures, 'before.json');
-    const filePathAfter = path.join(pathToFixtures, 'after.json');
+    const filePathBefore = getFixturePath('before.json');
+    const filePathAfter = getFixturePath('after.json');
     const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(actual);
+    expect(diff).toBe(expected1);
+  });
+
+  it('test json1', () => {
+    const filePathBefore = getFixturePath('before1.json');
+    const filePathAfter = getFixturePath('after1.json');
+    const diff = getDiff(filePathBefore, filePathAfter);
+    expect(diff).toBe(expected2);
   });
 
   it('test yml', () => {
-    const filePathBefore = path.join(pathToFixtures, 'before.yml');
-    const filePathAfter = path.join(pathToFixtures, 'after.yml');
+    const filePathBefore = getFixturePath('before.yml');
+    const filePathAfter = getFixturePath('after.yml');
     const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(actual);
+    expect(diff).toBe(expected1);
+  });
+
+  it('test yml1', () => {
+    const filePathBefore = getFixturePath('before1.yml');
+    const filePathAfter = getFixturePath('after1.yml');
+    const diff = getDiff(filePathBefore, filePathAfter);
+    expect(diff).toBe(expected2);
   });
 
   it('test ini', () => {
-    const filePathBefore = path.join(pathToFixtures, 'before.ini');
-    const filePathAfter = path.join(pathToFixtures, 'after.ini');
+    const filePathBefore = getFixturePath('before.ini');
+    const filePathAfter = getFixturePath('after.ini');
     const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(actual);
+    expect(diff).toBe(expected1);
   });
 });
