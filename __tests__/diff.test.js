@@ -3,7 +3,7 @@ import fs from 'fs';
 import getDiff from '../src';
 
 
-describe('diffFile', () => {
+describe('toString', () => {
   const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
   const expected1 = fs.readFileSync(getFixturePath('result.txt'), 'utf-8');
   const expected2 = fs.readFileSync(getFixturePath('result1.txt'), 'utf-8');
@@ -41,5 +41,24 @@ describe('diffFile', () => {
     const filePathAfter = getFixturePath('after.ini');
     const diff = getDiff(filePathBefore, filePathAfter);
     expect(diff).toBe(expected1);
+  });
+});
+
+describe('plain', () => {
+  const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
+  const expected = fs.readFileSync(getFixturePath('plain.txt'), 'utf-8');
+
+  it('test json1', () => {
+    const filePathBefore = getFixturePath('before1.json');
+    const filePathAfter = getFixturePath('after1.json');
+    const diff = getDiff(filePathBefore, filePathAfter, 'plain');
+    expect(diff).toBe(expected);
+  });
+
+  it('test yml1', () => {
+    const filePathBefore = getFixturePath('before1.yml');
+    const filePathAfter = getFixturePath('after1.yml');
+    const diff = getDiff(filePathBefore, filePathAfter, 'plain');
+    expect(diff).toBe(expected);
   });
 });

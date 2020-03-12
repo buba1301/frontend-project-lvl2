@@ -1,7 +1,7 @@
 install: install-deps
 
 run:
-	npx babel-node 'src/bin/gendiff.js' -h
+	npx babel-node 'src/bin/gendiff.js' ./__tests__/__fixtures__/before1.json ./__tests__/__fixtures__/after1.json
 
 install-deps:
 	npm ci
