@@ -17,14 +17,14 @@ const mapped = {
   changed: (count, name, { added, deleted }) => `${spaces(count - 2)}+ ${name}: ${stringify(added, count)}\n${spaces(count - 2)}- ${name}: ${stringify(deleted, count)}`,
 };
 
-const renderToString = (data, count = 0) => {
-  if (data.type === 'keyList') {
+const formatToString = (data, count = 0) => {
+  if (data.type === 'propertyList') {
     const newCount = count + 4;
-    return `{${data.children.map((elem) => renderToString(elem, newCount)).join('')}\n${spaces(count)}}`;
+    return `{${data.children.map((elem) => formatToString(elem, newCount)).join('')}\n${spaces(count)}}`;
   }
   const { name, value, state } = data;
-  const processValue = value.type === 'keyList' ? renderToString(value, count) : value;
+  const processValue = value.type === 'propertyList' ? formatToString(value, count) : value;
   return `\n${mapped[state](count, name, processValue)}`;
 };
 
-export default renderToString;
+export default formatToString;

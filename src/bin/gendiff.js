@@ -11,8 +11,6 @@ program
     console.log(genDiff(firstConfig, secondConfig));
   })
   .description('Compares two configuration files and shows a difference.')
-  .option('-f, --format [type]', 'Output format');
+  .option('-f, --format [type]', 'Output format', 'toString');
 
 program.parse(process.argv);
-
-// if (program.format) console.log('%s', [program.format]);

@@ -2,63 +2,48 @@ import path from 'path';
 import fs from 'fs';
 import getDiff from '../src';
 
+const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
+const filePath = (file) => getFixturePath(file);
+const expected = (result) => fs.readFileSync(getFixturePath(result), 'utf-8');
 
 describe('toString', () => {
-  const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
-  const expected1 = fs.readFileSync(getFixturePath('result.txt'), 'utf-8');
-  const expected2 = fs.readFileSync(getFixturePath('result1.txt'), 'utf-8');
-
-  it('test json', () => {
-    const filePathBefore = getFixturePath('before.json');
-    const filePathAfter = getFixturePath('after.json');
-    const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(expected1);
-  });
-
   it('test json1', () => {
-    const filePathBefore = getFixturePath('before1.json');
-    const filePathAfter = getFixturePath('after1.json');
-    const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(expected2);
+    expect(getDiff(filePath('before.json'), filePath('after.json'))).toBe(expected('result.txt'));
   });
 
   it('test yml', () => {
-    const filePathBefore = getFixturePath('before.yml');
-    const filePathAfter = getFixturePath('after.yml');
-    const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(expected1);
-  });
-
-  it('test yml1', () => {
-    const filePathBefore = getFixturePath('before1.yml');
-    const filePathAfter = getFixturePath('after1.yml');
-    const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(expected2);
+    expect(getDiff(filePath('before.yml'), filePath('after.yml'))).toBe(expected('result.txt'));
   });
 
   it('test ini', () => {
-    const filePathBefore = getFixturePath('before.ini');
-    const filePathAfter = getFixturePath('after.ini');
-    const diff = getDiff(filePathBefore, filePathAfter);
-    expect(diff).toBe(expected1);
+    expect(getDiff(filePath('before.ini'), filePath('after.ini'))).toBe(expected('result.txt'));
   });
 });
 
 describe('plain', () => {
-  const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
-  const expected = fs.readFileSync(getFixturePath('plain.txt'), 'utf-8');
-
-  it('test json1', () => {
-    const filePathBefore = getFixturePath('before1.json');
-    const filePathAfter = getFixturePath('after1.json');
-    const diff = getDiff(filePathBefore, filePathAfter, 'plain');
-    expect(diff).toBe(expected);
+  it('test json', () => {
+    expect(getDiff(filePath('before.json'), filePath('after.json'), 'plain')).toBe(expected('plain.txt'));
   });
 
-  it('test yml1', () => {
-    const filePathBefore = getFixturePath('before1.yml');
-    const filePathAfter = getFixturePath('after1.yml');
-    const diff = getDiff(filePathBefore, filePathAfter, 'plain');
-    expect(diff).toBe(expected);
+  it('test yml', () => {
+    expect(getDiff(filePath('before.yml'), filePath('after.yml'), 'plain')).toBe(expected('plain.txt'));
+  });
+
+  it('test ini', () => {
+    expect(getDiff(filePath('before.ini'), filePath('after.ini'), 'plain')).toBe(expected('plain.txt'));
+  });
+});
+
+describe('json', () => {
+  it('test json', () => {
+    expect(getDiff(filePath('before.json'), filePath('after.json'), 'json')).toBe(expected('result.json'));
+  });
+
+  it('test yml', () => {
+    expect(getDiff(filePath('before.yml'), filePath('after.yml'), 'json')).toBe(expected('result.json'));
+  });
+
+  it('test ini', () => {
+    expect(getDiff(filePath('before.ini'), filePath('after.ini'), 'json')).toBe(expected('result.json'));
   });
 });
