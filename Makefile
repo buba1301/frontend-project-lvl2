@@ -1,7 +1,7 @@
 install: install-deps
 
 run:
-	npx babel-node 'src/bin/gendiff.js' --format plain ./__tests__/__fixtures__/before.json ./__tests__/__fixtures__/after.json
+	npx babel-node src/bin/genDiff.js -h
 
 install-deps:
 	npm ci
@@ -20,7 +20,7 @@ lint:
 	npx eslint .
 
 publish:
-	npm publish
+	npm publish --dry-run
 
 .PHONY: test
 

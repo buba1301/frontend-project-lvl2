@@ -24,4 +24,4 @@ const render = (data) => {
   }, {});
 };
 
-export default (data) => JSON.stringify(render(iter(data)), null, '  ');
+export default (data) => JSON.stringify(render(iter(data)), '', '  ');

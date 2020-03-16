@@ -12,6 +12,7 @@ const mapping = {
 
 export default (filePath) => {
   const pathToFile = path.resolve(process.cwd(), filePath);
+  console.log(pathToFile);
   const type = path.extname(filePath).slice(1);
   const data = fs.readFileSync(pathToFile).toString();
   return mapping[type](data);
