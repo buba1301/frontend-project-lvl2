@@ -1,5 +1,5 @@
 
-import parser from './parsers';
+import parse from './parsers';
 import difference from './getDifference';
 import toString from './formaters/toString';
 import plain from './formaters/plain';
@@ -12,9 +12,9 @@ const mapped = {
 };
 
 const getDiff = (filePath1, filePath2, format = 'toString') => {
-  const file1 = parser(filePath1);
-  const file2 = parser(filePath2);
-  return mapped[format](difference(file1, file2));
+  const content1 = parse(filePath1);
+  const content2 = parse(filePath2);
+  return mapped[format](difference(content1, content2));
 };
 
 export default getDiff;
