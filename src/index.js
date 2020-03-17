@@ -1,6 +1,6 @@
 
 import parser from './parsers';
-import difference from './difference';
+import difference from './getDifference';
 import toString from './formaters/toString';
 import plain from './formaters/plain';
 import json from './formaters/json';

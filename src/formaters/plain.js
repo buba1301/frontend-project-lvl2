@@ -14,6 +14,7 @@ const formatToPlain = (data, keys = []) => data.map(({
   if (children.length > 0) {
     return formatToPlain(children, [...keys, name]);
   }
+
   const key = [...keys, name].join('.');
   return mapped[state](key, value);
 }).join('');

@@ -22,6 +22,7 @@ const formatToJson = (data) => data.reduce((acc, {
   if (children.length > 0) {
     return { ...acc, [name]: formatToJson(children) };
   }
+
   return { ...acc, [name]: { [state]: mapped[state](value) } };
 }, {});
 

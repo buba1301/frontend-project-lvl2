@@ -18,14 +18,14 @@ const mapped = {
   children: (count, name, children, fn, newCount) => `\n${spaces(count)}${name}: {${fn(children, newCount)}\n${spaces(count)}}`,
 };
 
-const renderToString = (data, count = 4) => data.map(({
+const formatToString = (data, count = 4) => data.map(({
   name, value, children, state,
 }) => {
   if (children.length > 0) {
     const newCount = count + 4;
-    return mapped[state](count, name, children, renderToString, newCount);
+    return mapped[state](count, name, children, formatToString, newCount);
   }
   return mapped[state](count, name, value);
 }).join('');
 
-export default (data) => `{${renderToString(data)}\n}`;
+export default (data) => `{${formatToString(data)}\n}`;
