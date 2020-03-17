@@ -2,48 +2,22 @@ import path from 'path';
 import fs from 'fs';
 import getDiff from '../src';
 
-const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
-const filePath = (file) => getFixturePath(file);
-const expected = (result) => fs.readFileSync(getFixturePath(result), 'utf-8');
+const testArgs = [
+  ['json', 'toString'],
+  ['yml', 'toString'],
+  ['ini', 'toString'],
+  ['json', 'plain'],
+  ['yml', 'plain'],
+  ['ini', 'plain'],
+  ['json', 'json'],
+  ['ini', 'json'],
+  ['yml', 'json'],
+];
 
-describe('toString', () => {
-  it('test json1', () => {
-    expect(getDiff(filePath('before.json'), filePath('after.json'))).toBe(expected('result.txt'));
-  });
-
-  it('test yml', () => {
-    expect(getDiff(filePath('before.yml'), filePath('after.yml'))).toBe(expected('result.txt'));
-  });
-
-  it('test ini', () => {
-    expect(getDiff(filePath('before.ini'), filePath('after.ini'))).toBe(expected('result.txt'));
-  });
-});
-
-describe('plain', () => {
-  it('test json', () => {
-    expect(getDiff(filePath('before.json'), filePath('after.json'), 'plain')).toBe(expected('plain.txt'));
-  });
-
-  it('test yml', () => {
-    expect(getDiff(filePath('before.yml'), filePath('after.yml'), 'plain')).toBe(expected('plain.txt'));
-  });
-
-  it('test ini', () => {
-    expect(getDiff(filePath('before.ini'), filePath('after.ini'), 'plain')).toBe(expected('plain.txt'));
-  });
-});
-
-describe('json', () => {
-  it('test json', () => {
-    expect(getDiff(filePath('before.json'), filePath('after.json'), 'json')).toBe(expected('resultJson.txt'));
-  });
-
-  it('test yml', () => {
-    expect(getDiff(filePath('before.yml'), filePath('after.yml'), 'json')).toBe(expected('resultJson.txt'));
-  });
-
-  it('test ini', () => {
-    expect(getDiff(filePath('before.ini'), filePath('after.ini'), 'json')).toBe(expected('resultJson.txt'));
-  });
+test.each(testArgs)('%s type files difference with %s output', (filetype, format) => {
+  console.log(format);
+  const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
+  const filePath = (file) => getFixturePath(file);
+  const expected = (result) => fs.readFileSync(getFixturePath(result), 'utf-8');
+  expect(getDiff(filePath(`before.${filetype}`), filePath(`after.${filetype}`), format)).toBe(expected(`${format}.txt`));
 });
