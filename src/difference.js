@@ -1,45 +1,51 @@
 import _ from 'lodash';
 
-const iter = (data) => {
-  const [first] = data;
-  if (first instanceof Array) {
-    return { type: 'propertyList', children: data.map(iter) };
-  }
-  const [name, body, state] = data;
-  const processBody = body instanceof Array ? iter(body) : body;
-  return {
-    type: 'property',
-    name,
-    value: processBody,
-    state,
-  };
-};
+const mapped = [
+  {
+    // eslint-disable-next-line max-len
+    check: (key, beforeFile, afterFile) => _.isObject(beforeFile[key]) && _.isObject(afterFile[key]),
+    process: (key, beforeValue, afterValue, fn) => ({
+      name: key, value: null, children: fn(beforeValue, afterValue), state: 'children',
+    }),
+  },
+  {
+    check: (key, beforeFile) => !_.has(beforeFile, key),
+    process: (key, beforeValue, afterValue) => ({
+      name: key, value: afterValue, children: [], state: 'added',
+    }),
+  },
+  {
+    check: (key, beforeFile, afterFile) => !_.has(afterFile, key),
+    process: (key, beforeValue) => ({
+      name: key, value: beforeValue, children: [], state: 'deleted',
+    }),
+  },
+  {
+    check: (key, beforeFile, afterFile) => beforeFile[key] === afterFile[key],
+    process: (key, beforeValue) => ({
+      name: key, value: beforeValue, children: [], state: 'unchanged',
+    }),
+  },
+  {
+    check: (key, beforeFile, afterFile) => beforeFile[key] !== afterFile[key],
+    process: (key, beforeValue, afterValue) => ({
+      name: key, value: { added: afterValue, deleted: beforeValue }, children: [], state: 'changed',
+    }),
+  },
+];
 
+const getElem = (key, data1, data2) => mapped.find(({ check }) => check(key, data1, data2));
 
 const difference = (file1, file2) => {
   const beforeFileKeys = Object.keys(file1);
   const afterFileKeys = Object.keys(file2);
   const allKeys = _.union(beforeFileKeys, afterFileKeys);
 
-  const diff = allKeys.reduce((acc, key) => {
+  return allKeys.map((key) => {
     const beforeValue = file1[key];
     const afterValue = file2[key];
-    if (beforeValue instanceof Object && afterValue instanceof Object) {
-      return [...acc, [key, difference(beforeValue, afterValue), 'unchanged']];
-    }
-    if (_.has(file1, key) && !_.has(file2, key)) {
-      return [...acc, [key, beforeValue, 'deleted']];
-    }
-    if (!_.has(file1, key) && _.has(file2, key)) {
-      return [...acc, [key, afterValue, 'added']];
-    }
-    if (_.has(file1, key) && _.has(file2, key) && beforeValue === afterValue) {
-      return [...acc, [key, afterValue, 'unchanged']];
-    }
-    return [...acc, [key, { added: afterValue, deleted: beforeValue }, 'changed']];
-  }, []);
-
-  return iter(diff);
+    const { process } = getElem(key, file1, file2);
+    return process(key, beforeValue, afterValue, difference);
+  });
 };
-
 export default difference;

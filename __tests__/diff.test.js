@@ -36,14 +36,14 @@ describe('plain', () => {
 
 describe('json', () => {
   it('test json', () => {
-    expect(getDiff(filePath('before.json'), filePath('after.json'), 'json')).toBe(expected('result.json'));
+    expect(getDiff(filePath('before.json'), filePath('after.json'), 'json')).toBe(expected('resultJson.txt'));
   });
 
   it('test yml', () => {
-    expect(getDiff(filePath('before.yml'), filePath('after.yml'), 'json')).toBe(expected('result.json'));
+    expect(getDiff(filePath('before.yml'), filePath('after.yml'), 'json')).toBe(expected('resultJson.txt'));
   });
 
   it('test ini', () => {
-    expect(getDiff(filePath('before.ini'), filePath('after.ini'), 'json')).toBe(expected('result.json'));
+    expect(getDiff(filePath('before.ini'), filePath('after.ini'), 'json')).toBe(expected('resultJson.txt'));
   });
 });

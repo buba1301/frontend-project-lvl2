@@ -8,16 +8,14 @@ const mapped = {
   changed: (key, { added, deleted }) => `Property '${key}' was changed from ${stringify(deleted)} to ${stringify(added)}\n`,
 };
 
-const formatToPlain = (data, keys = []) => {
-  if (data.type === 'propertyList') {
-    return `${data.children.map((elem) => formatToPlain(elem, keys)).join('')}`;
-  }
-  const { name, value, state } = data;
-  if (value.type === 'propertyList') {
-    return `${value.children.map((elem) => formatToPlain(elem, [...keys, name])).join('')}`;
+const formatToPlain = (data, keys = []) => data.map(({
+  name, value, children, state,
+}) => {
+  if (children.length > 0) {
+    return formatToPlain(children, [...keys, name]);
   }
   const key = [...keys, name].join('.');
-  return `${mapped[state](key, value)}`;
-};
+  return mapped[state](key, value);
+}).join('');
 
 export default formatToPlain;

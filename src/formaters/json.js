@@ -1,27 +1,28 @@
 
-const stringify = (data) => (data instanceof Object ? '[complex value]' : `'${data}'`);
+const strInNum = (value) => {
+  // eslint-disable-next-line no-restricted-globals
+  if (isNaN(value) || typeof value === 'boolean') {
+    return value;
+  }
+  return Number(value);
+};
+
+const stringify = (data) => (data instanceof Object ? '[complex value]' : strInNum(data));
 
 const mapped = {
-  deleted: () => 'Property was deleted',
-  added: (value) => `Property was added with value: ${stringify(value)}`,
-  unchanged: (value) => (value instanceof Array ? value : 'Property was unchanged'),
-  changed: ({ added, deleted }) => `Property was changed from ${stringify(deleted)} to ${stringify(added)}`,
+  deleted: (value) => stringify(value),
+  added: (value) => stringify(value),
+  unchanged: (value) => stringify(value),
+  changed: ({ added, deleted }) => `from ${stringify(deleted)} to ${stringify(added)}`,
 };
 
-const iter = (data) => {
-  if (data.type === 'propertyList') {
-    return data.children.map((elem) => iter(elem));
+const formatToJson = (data) => data.reduce((acc, {
+  name, value, children, state,
+}) => {
+  if (children.length > 0) {
+    return { ...acc, [name]: formatToJson(children) };
   }
-  const { name, value, state } = data;
+  return { ...acc, [name]: { [state]: mapped[state](value) } };
+}, {});
 
-  const processValue = value.type === 'propertyList' ? iter(value) : value;
-  return [name, mapped[state](processValue, state)];
-};
-
-const render = (data) => {
-  return data.reduce((acc, [key, value]) => {
-    return value instanceof Array ? { ...acc, [key]: render(value) } : { ...acc, [key]: value };
-  }, {});
-};
-
-export default (data) => JSON.stringify(render(iter(data)), '', '  ');
+export default (data) => JSON.stringify(formatToJson(data));

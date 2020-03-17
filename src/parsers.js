@@ -5,14 +5,13 @@ import process from 'process';
 import ini from 'ini';
 
 const mapping = {
-  yml: (data) => yaml.safeLoad(data),
-  json: (data) => JSON.parse(data),
-  ini: (data) => ini.parse(data),
+  yml: yaml.safeLoad,
+  json: JSON.parse,
+  ini: ini.parse,
 };
 
 export default (filePath) => {
   const pathToFile = path.resolve(process.cwd(), filePath);
-  console.log(pathToFile);
   const type = path.extname(filePath).slice(1);
   const data = fs.readFileSync(pathToFile).toString();
   return mapping[type](data);

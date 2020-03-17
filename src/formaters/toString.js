@@ -11,20 +11,21 @@ const stringify = (data, count) => {
 };
 
 const mapped = {
-  deleted: (count, name, value) => `${spaces(count - 2)}- ${name}: ${stringify(value, count)}`,
-  added: (count, name, value) => `${spaces(count - 2)}+ ${name}: ${stringify(value, count)}`,
-  unchanged: (count, name, value) => `${spaces(count)}${name}: ${stringify(value, count)}`,
-  changed: (count, name, { added, deleted }) => `${spaces(count - 2)}+ ${name}: ${stringify(added, count)}\n${spaces(count - 2)}- ${name}: ${stringify(deleted, count)}`,
+  deleted: (count, name, value) => `\n${spaces(count - 2)}- ${name}: ${stringify(value, count)}`,
+  added: (count, name, value) => `\n${spaces(count - 2)}+ ${name}: ${stringify(value, count)}`,
+  unchanged: (count, name, value) => `\n${spaces(count)}${name}: ${stringify(value, count)}`,
+  changed: (count, name, { added, deleted }) => `\n${spaces(count - 2)}+ ${name}: ${stringify(added, count)}\n${spaces(count - 2)}- ${name}: ${stringify(deleted, count)}`,
+  children: (count, name, children, fn, newCount) => `\n${spaces(count)}${name}: {${fn(children, newCount)}\n${spaces(count)}}`,
 };
 
-const formatToString = (data, count = 0) => {
-  if (data.type === 'propertyList') {
+const renderToString = (data, count = 4) => data.map(({
+  name, value, children, state,
+}) => {
+  if (children.length > 0) {
     const newCount = count + 4;
-    return `{${data.children.map((elem) => formatToString(elem, newCount)).join('')}\n${spaces(count)}}`;
+    return mapped[state](count, name, children, renderToString, newCount);
   }
-  const { name, value, state } = data;
-  const processValue = value.type === 'propertyList' ? formatToString(value, count) : value;
-  return `\n${mapped[state](count, name, processValue)}`;
-};
+  return mapped[state](count, name, value);
+}).join('');
 
-export default formatToString;
+export default (data) => `{${renderToString(data)}\n}`;
