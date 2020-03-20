@@ -36,16 +36,16 @@ const mapped = [
 
 const getElem = (key, data1, data2) => mapped.find(({ check }) => check(key, data1, data2));
 
-const getDifference = (file1, file2) => {
-  const beforeFileKeys = Object.keys(file1);
-  const afterFileKeys = Object.keys(file2);
+const buildDifference = (content1, content2) => {
+  const beforeFileKeys = Object.keys(content1);
+  const afterFileKeys = Object.keys(content2);
   const allKeys = _.union(beforeFileKeys, afterFileKeys);
 
   return allKeys.map((key) => {
-    const beforeValue = file1[key];
-    const afterValue = file2[key];
-    const { process } = getElem(key, file1, file2);
-    return process(key, beforeValue, afterValue, getDifference);
+    const beforeValue = content1[key];
+    const afterValue = content2[key];
+    const { process } = getElem(key, content1, content2);
+    return process(key, beforeValue, afterValue, buildDifference);
   });
 };
-export default getDifference;
+export default buildDifference;
