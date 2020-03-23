@@ -3,9 +3,9 @@ import fs from 'fs';
 import getDiff from '../src';
 
 const testArgs = [
-  ['json', 'string'],
-  ['yml', 'string'],
-  ['ini', 'string'],
+  ['json', 'detailed'],
+  ['yml', 'detailed'],
+  ['ini', 'detailed'],
   ['json', 'plain'],
   ['yml', 'plain'],
   ['ini', 'plain'],
@@ -15,7 +15,6 @@ const testArgs = [
 ];
 
 test.each(testArgs)('%s type files difference with %s output', (filetype, format) => {
-  console.log(format);
   const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
   const filePath = (file) => getFixturePath(file);
 

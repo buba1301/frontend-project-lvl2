@@ -10,20 +10,16 @@ const strInNum = (value) => {
 const stringify = (data) => (data instanceof Object ? '[complex value]' : strInNum(data));
 
 const mapped = {
-  deleted: (value) => stringify(value),
-  added: (value) => stringify(value),
-  unchanged: (value) => stringify(value),
-  changed: ({ added, deleted }) => `from ${stringify(deleted)} to ${stringify(added)}`,
+  deleted: ({ value }) => stringify(value),
+  added: ({ value }) => stringify(value),
+  unchanged: ({ value }) => stringify(value),
+  changed: ({ value }) => `from ${stringify(value.deleted)} to ${stringify(value.added)}`,
+  children: ({ children }, fn) => fn(children),
 };
 
-const formatToJson = (data) => data.reduce((acc, {
-  name, value, children, state,
-}) => {
-  if (children.length > 0) {
-    return { ...acc, [name]: formatToJson(children) };
-  }
-
-  return { ...acc, [name]: { [state]: mapped[state](value) } };
+const buildJsonFormat = (data) => data.reduce((acc, node) => {
+  const { name, state } = node;
+  return { ...acc, [name]: { [state]: mapped[state](node, buildJsonFormat) } };
 }, {});
 
-export default (data) => JSON.stringify(formatToJson(data));
+export default (data) => JSON.stringify(buildJsonFormat(data));

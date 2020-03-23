@@ -1,22 +1,19 @@
 
 const stringify = (data) => (data instanceof Object ? '[complex value]' : `'${data}'`);
 
+const key = (name, keys) => [...keys, name].join('.');
+
 const mapped = {
-  deleted: (key) => `Property '${key}' was deleted\n`,
-  added: (key, value) => `Property '${key}' was added with value: ${stringify(value)}\n`,
-  unchanged: (key) => `Property '${key}' was unchanged\n`,
-  changed: (key, { added, deleted }) => `Property '${key}' was changed from ${stringify(deleted)} to ${stringify(added)}\n`,
+  deleted: ({ name }, keys) => `Property '${key(name, keys)}' was deleted\n`,
+  added: ({ name, value }, keys) => `Property '${key(name, keys)}' was added with value: ${stringify(value)}\n`,
+  unchanged: ({ name }, keys) => `Property '${key(name, keys)}' was unchanged\n`,
+  changed: ({ name, value }, keys) => `Property '${key(name, keys)}' was changed from ${stringify(value.deleted)} to ${stringify(value.added)}\n`,
+  children: ({ name, children }, keys, fn) => fn(children, [...keys, name]),
 };
 
-const formatToPlain = (data, keys = []) => data.map(({
-  name, value, children, state,
-}) => {
-  if (children.length > 0) {
-    return formatToPlain(children, [...keys, name]);
-  }
-
-  const key = [...keys, name].join('.');
-  return mapped[state](key, value);
+const buildPlainFormat = (data, keys = []) => data.map((node) => {
+  const { state } = node;
+  return mapped[state](node, keys, buildPlainFormat);
 }).join('');
 
-export default formatToPlain;
+export default buildPlainFormat;
