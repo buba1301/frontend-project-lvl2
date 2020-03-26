@@ -1,5 +1,5 @@
 
-const strInNum = {
+const outputValueType = {
   // eslint-disable-next-line no-restricted-globals
   string: (value) => (isNaN(value) ? value : Number(value)),
   boolean: (value) => value,
@@ -7,7 +7,7 @@ const strInNum = {
   number: (value) => value,
 };
 
-const stringify = (data) => strInNum[(typeof data)](data);
+const stringify = (data) => outputValueType[(typeof data)](data);
 
 const mapped = {
   deleted: ({ value }) => stringify(value),
