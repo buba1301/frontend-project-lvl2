@@ -1,5 +1,13 @@
 
-const stringify = (data) => (data instanceof Object ? '[complex value]' : `'${data}'`);
+const valueType = {
+  // eslint-disable-next-line no-restricted-globals
+  string: (value) => `'${value}'`,
+  boolean: (value) => value,
+  object: () => '[complex value]',
+  number: (value) => value,
+};
+
+const stringify = (data) => (valueType[(typeof data)](data));
 
 const key = (name, keys) => [...keys, name].join('.');
 
