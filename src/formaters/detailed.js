@@ -1,27 +1,27 @@
+const indent = 2;
+const spaces = (depth) => ' '.repeat(depth * indent);
 
-const spaces = (c) => ' '.repeat(c);
-
-const stringify = (data, count) => {
-  const newCount = count + 4;
-  if (data instanceof Object) {
-    const mapped = Object.keys(data).map((key) => `${key}: ${data[key]}`);
-    return `{\n${spaces(newCount)}${mapped.join('\n')}\n${spaces(count)}}`;
+const stringify = (data, depth) => {
+  if (!(data instanceof Object)) {
+    return `${data}`;
   }
-  return `${data}`;
+  const newDepth = depth + 3;
+  const mapped = Object.keys(data).map((key) => `${key}: ${data[key]}`);
+  return `{\n${spaces(newDepth)}${mapped.join('\n')}\n${spaces(depth + 1)}}`;
 };
 
 const mapped = {
-  deleted: ({ name, value }, count) => `\n${spaces(count - 2)}- ${name}: ${stringify(value, count)}`,
-  added: ({ name, value }, count) => `\n${spaces(count - 2)}+ ${name}: ${stringify(value, count)}`,
-  unchanged: ({ name, value }, count) => `\n${spaces(count)}${name}: ${stringify(value, count)}`,
-  changed: ({ name, value }, count) => `\n${spaces(count - 2)}+ ${name}: ${stringify(value.added, count)}\n${spaces(count - 2)}- ${name}: ${stringify(value.deleted, count)}`,
-  children: ({ name, children }, count, fn, newCount) => `\n${spaces(count)}${name}: {${fn(children, newCount)}\n${spaces(count)}}`,
+  deleted: ({ name, value }, depth) => `\n${spaces(depth)}- ${name}: ${stringify(value, depth)}`,
+  added: ({ name, value }, depth) => `\n${spaces(depth)}+ ${name}: ${stringify(value, depth)}`,
+  unchanged: ({ name, value }, depth) => `\n${spaces(depth)}  ${name}: ${stringify(value, depth)}`,
+  changed: ({ name, beforeValue, afterValue }, depth) => `\n${spaces(depth)}+ ${name}: ${stringify(afterValue, depth)}\n${spaces(depth)}- ${name}: ${stringify(beforeValue, depth)}`,
+  nested: ({ name, children }, depth, fn, newDepth) => `\n${spaces(depth)}  ${name}: {${fn(children, newDepth)}\n${spaces(depth + 1)}}`,
 };
 
-const buildDetailedFormat = (data, count = 4) => data.map((node) => {
+const buildDetailedFormat = (data, depth = 1) => data.map((node) => {
   const { state } = node;
-  const newCount = count + 4;
-  return mapped[state](node, count, buildDetailedFormat, newCount);
+  const newDepth = depth + 2;
+  return mapped[state](node, depth, buildDetailedFormat, newDepth);
 }).join('');
 
 export default (data) => `{${buildDetailedFormat(data)}\n}`;

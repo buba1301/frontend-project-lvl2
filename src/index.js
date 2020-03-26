@@ -1,7 +1,7 @@
 import { getType, getData } from './utils';
 import parse from './parsers';
 import buildDifference from './buildDifference';
-import mapped from './formaters';
+import getOutput from './formaters';
 
 const getDiff = (filePath1, filePath2, format) => {
   const type1 = getType(filePath1);
@@ -15,7 +15,7 @@ const getDiff = (filePath1, filePath2, format) => {
 
   const difference = buildDifference(data1, data2);
 
-  return mapped[format](difference);
+  return getOutput(difference, format);
 };
 
 export default getDiff;

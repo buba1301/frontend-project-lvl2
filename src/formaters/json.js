@@ -1,20 +1,20 @@
 
-const strInNum = (value) => {
+const strInNum = {
   // eslint-disable-next-line no-restricted-globals
-  if (isNaN(value) || typeof value === 'boolean') {
-    return value;
-  }
-  return Number(value);
+  string: (value) => (isNaN(value) ? value : Number(value)),
+  boolean: (value) => value,
+  object: () => '[complex value]',
+  number: (value) => value,
 };
 
-const stringify = (data) => (data instanceof Object ? '[complex value]' : strInNum(data));
+const stringify = (data) => strInNum[(typeof data)](data);
 
 const mapped = {
   deleted: ({ value }) => stringify(value),
   added: ({ value }) => stringify(value),
   unchanged: ({ value }) => stringify(value),
-  changed: ({ value }) => `from ${stringify(value.deleted)} to ${stringify(value.added)}`,
-  children: ({ children }, fn) => fn(children),
+  changed: ({ beforeValue, afterValue }) => `from ${stringify(beforeValue)} to ${stringify(afterValue)}`,
+  nested: ({ children }, fn) => fn(children),
 };
 
 const buildJsonFormat = (data) => data.reduce((acc, node) => {

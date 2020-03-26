@@ -5,7 +5,7 @@ const mapped = [
     // eslint-disable-next-line max-len
     check: (key, beforeFile, afterFile) => _.isObject(beforeFile[key]) && _.isObject(afterFile[key]),
     process: (key, beforeValue, afterValue, fn) => ({
-      name: key, value: null, state: 'children', children: fn(beforeValue, afterValue),
+      name: key, state: 'nested', children: fn(beforeValue, afterValue),
     }),
   },
   {
@@ -15,7 +15,7 @@ const mapped = [
     }),
   },
   {
-    check: (key, beforeFile, afterFile) => !_.has(afterFile, key),
+    check: (key, _beforeFile, afterFile) => !_.has(afterFile, key),
     process: (key, beforeValue) => ({
       name: key, value: beforeValue, state: 'deleted',
     }),
@@ -29,7 +29,7 @@ const mapped = [
   {
     check: (key, beforeFile, afterFile) => beforeFile[key] !== afterFile[key],
     process: (key, beforeValue, afterValue) => ({
-      name: key, value: { added: afterValue, deleted: beforeValue }, state: 'changed',
+      name: key, beforeValue, afterValue, state: 'changed',
     }),
   },
 ];

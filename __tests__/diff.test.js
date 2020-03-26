@@ -14,8 +14,9 @@ const testArgs = [
   ['yml', 'json'],
 ];
 
+const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
+
 test.each(testArgs)('%s type files difference with %s output', (filetype, format) => {
-  const getFixturePath = (name) => path.join(__dirname, '__fixtures__', name);
   const filePath = (file) => getFixturePath(file);
 
   const beforeFilePath = filePath(`before.${filetype}`);

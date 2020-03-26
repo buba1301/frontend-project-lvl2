@@ -1,11 +1,11 @@
-import detailed from './detailed';
-import plain from './plain';
-import json from './json';
+import getDetailed from './detailed';
+import getPlain from './plain';
+import getJson from './json';
 
 const mapped = {
-  detailed: (data) => detailed(data),
-  plain: (data) => plain(data),
-  json: (data) => json(data),
+  detailed: getDetailed,
+  plain: getPlain,
+  json: getJson,
 };
 
-export default mapped;
+export default (data, format) => mapped[format](data);
