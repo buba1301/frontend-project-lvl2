@@ -1,6 +1,5 @@
 
 const outputValueType = {
-  // eslint-disable-next-line no-restricted-globals
   string: (value) => `'${value}'`,
   boolean: (value) => value,
   object: () => '[complex value]',
