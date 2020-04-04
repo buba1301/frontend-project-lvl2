@@ -1,7 +1,11 @@
 
 const indent = 2;
 
-const getSpaces = (depth, indentNum) => (depth === 1 ? ' '.repeat(indentNum ** depth) : ' '.repeat(indentNum ** depth + indentNum));
+const getSpaces = (depth, indentNum) => {
+  const firstLevelIndents = ' '.repeat(indentNum ** depth);
+  const nextLevelIndents = ' '.repeat(indentNum ** depth + indentNum);
+  return depth === 1 ? firstLevelIndents : nextLevelIndents;
+};
 
 const stringify = (data, spaces) => {
   if (!(data instanceof Object)) {
